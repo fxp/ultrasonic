@@ -94,7 +94,11 @@ var server = net.createServer(function (socket) {
                 result_window.push(message)
                 var delta = current_time - last_window_at
                 if (delta > 500) {
-                    console.log(delta, result_window[0])
+                    if (result_window.length > 0) {
+                        console.log(delta, result_window[0])
+                    } else {
+                        console.log(delta, "no result")
+                    }
                     last_window_at = current_time
                     result_window = []
                 }
