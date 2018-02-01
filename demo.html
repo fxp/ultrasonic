@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Examples of D3 transitions</title>
+    <style>
+        svg {
+            border: 1px solid black;
+        }
+
+        fieldset {
+            min-width: 0;
+            width: 50%;
+        }
+    </style>
+    <script src="./d3.v3.min.js"></script>
+    <!--<script type="text/javascript"-->
+    <!--src="http://localhost:8000/faye/client.js">-->
+
+</head>
+<body>
+<!--<div id="simpleShapes" width="50%" height="500px">-->
+<!--<svg width="1000" height="800">-->
+<!--<rect x="400" y="790" width="182" height="10" stroke="blue" fill="white"/>-->
+<!--<circle cx="250" cy="75" r="10" stroke="green" fill="green"/>-->
+<!--</svg>-->
+<!--</div>-->
+
+<script>
+
+    var svg = d3.select('body').append('svg')
+        .attr('width', 500)
+        .attr('height', 500)
+
+    svg.append('line')
+        .attr('x1', 250)
+        .attr('y1', 0)
+        .attr('x2', 250)
+        .attr('y2', 500)
+        .attr('stroke', "gray")
+        .attr('stroke-width', "1")
+    var angle = svg.append('text')
+        .attr('dx', 240)
+        .attr('dy', 460)
+        .text("jiaodu")
+
+
+    var circleGroup = svg.append('g')
+    var circle = circleGroup.append("circle")
+    var circleLabel = circleGroup.append("text")
+    var line = circleGroup.append("line")
+
+    var circle_radius = 10
+
+    function moveCircle(x, y) {
+        circle
+            .attr('cx', x - circle_radius / 2)
+            .attr('cy', y - circle_radius / 2)
+            .attr('r', circle_radius)
+            .attr('fill', 'green')
+        circleLabel
+            .attr('dx', x + 20)
+            .attr('dy', y + 20)
+            .text(x + "," + y)
+
+        line
+            .attr('x1', x - circle_radius / 2)
+            .attr('y1', y - circle_radius / 2)
+            .attr('x2', 250)
+            .attr('y2', 500)
+            .attr('stroke', "black")
+            .attr('stroke-dasharray', "5,5")
+            .attr('stroke-width', "2")
+        angle.text(Math.floor(Math.random()*50))
+    }
+
+    moveCircle(180, 180)
+
+    setInterval(function () {
+        var x = 200 + Math.random() * 100,
+            y = 200 + Math.random() * 100
+        moveCircle(x, y)
+    }, 1000)
+
+    // var client = new Faye.Client('http://127.0.0.1:8000/');
+
+    // client.subscribe('/messages', function (message) {
+    //     circle.attr('cx', 250 + Math.floor(message.x / 10))
+    //     circle.attr('cy', 800 - Math.floor(message.y / 10))
+    //     console.log(message.x, message.y, message.l, message.r)
+    // });
+
+
+    // var circleData = [
+    //     {"cx": 100, "cy": 100, "radius": 20, "color": "green"}
+    // ]
+    //
+    // var circle = circleGroup.selectAll("circle")
+    //     .data(circleData)
+    //     .enter()
+    //     .append('circle')
+    // var circleAttr = circle
+    //     .attr("cx", function (d) {
+    //         return d.cx
+    //     })
+    //     .attr("cy", function (d) {
+    //         console.log(d);
+    //         return d.cy
+    //     })
+    //     .attr("r", function (d) {
+    //         return d.radius
+    //     })
+    //     .attr("fill", function (d) {
+    //         return d.color
+    //     })
+    // circleGroup.append("text")
+    //     .attr("dy", ".35em")
+    //     .text("lalal")
+    //
+    // setTimeout(function () {
+    //     circleGroup.attr('transform', 'translate(50,20)')
+    //     console.log('changed')
+    // }, 1000)
+
+
+    // var circleData = [
+    //     {"cx": 20, "cy": 20, "radius": 20, "color": "green"},
+    //     {"cx": 70, "cy": 70, "radius": 20, "color": "purple"}];
+    //
+    //
+    // var rectangleData = [
+    //     {"rx": 110, "ry": 110, "height": 30, "width": 30, "color": "blue"},
+    //     {"rx": 160, "ry": 160, "height": 30, "width": 30, "color": "red"}];
+    //
+    // var svgContainer = d3.select("body").append("svg")
+    //     .attr("width", 200)
+    //     .attr("height", 200);
+    //
+    // //We add the SVG Group Element Transform Here
+    // var circleGroup = svgContainer.append("g")
+    //     .attr("transform", "translate(80,0)");
+    //
+    // //Circles added to the circleGroup
+    // var circles = circleGroup.selectAll("circle")
+    //     .data(circleData)
+    //     .enter()
+    //     .append("circle");
+    //
+    // var circleAttributes = circles
+    //     .attr("cx", function (d) {
+    //         return d.cx;
+    //     })
+    //     .attr("cy", function (d) {
+    //         return d.cy;
+    //     })
+    //     .attr("r", function (d) {
+    //         return d.radius;
+    //     })
+    //     .style("fill", function (d) {
+    //         return d.color;
+    //     });
+    //
+    // //Rectangles added to the svgContainer
+    // var rectangles = svgContainer.selectAll("rect")
+    //     .data(rectangleData)
+    //     .enter()
+    //     .append("rect");
+    //
+    // var rectangleAttributes = rectangles
+    //     .attr("x", function (d) {
+    //         return d.rx;
+    //     })
+    //     .attr("y", function (d) {
+    //         return d.ry;
+    //     })
+    //     .attr("height", function (d) {
+    //         return d.height;
+    //     })
+    //     .attr("width", function (d) {
+    //         return d.width;
+    //     })
+    //     .style("fill", function (d) {
+    //         return d.color;
+    //     });
+    //
+    // setTimeout(function () {
+    //     circleData[0].cx = 200
+    //     console.log('changed')
+    // }, 1000)
+
+
+    // var circle = d3.select("circle")
+
+    // var client = new Faye.Client('http://127.0.0.1:8000/');
+
+    // client.subscribe('/messages', function (message) {
+    //     circle.attr('cx', 250 + Math.floor(message.x / 10))
+    //     circle.attr('cy', 800 - Math.floor(message.y / 10))
+    //     console.log(message.x, message.y, message.l, message.r)
+    // });
+</script>
+</body>
+</html>
