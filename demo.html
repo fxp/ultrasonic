@@ -28,20 +28,41 @@
 
 <script>
 
+    var view_width = 800,
+        view_height = 700,
+        bar_width = 182,
+        bar_height = 10
+
+    var parking_width = 400,
+        parking_height = 500
+
     var svg = d3.select('body').append('svg')
-        .attr('width', 500)
-        .attr('height', 500)
+        .attr('width', view_width)
+        .attr('height', view_height)
+    var bkimg = svg.append('image')
+        .attr({
+            'xlink:href': './parking.png',  // can also add svg file here
+        });
+
+
+    var rectangle = svg.append("rect")
+        .attr('x', view_width / 2 - bar_width / 2)
+        .attr('y', view_height - bar_height)
+        .attr('height', bar_height)
+        .attr('width', bar_width)
+        .attr('fill', 'grey')
+
 
     svg.append('line')
-        .attr('x1', 250)
+        .attr('x1', view_width / 2)
         .attr('y1', 0)
-        .attr('x2', 250)
-        .attr('y2', 500)
+        .attr('x2', view_width / 2)
+        .attr('y2', view_height)
         .attr('stroke', "gray")
         .attr('stroke-width', "1")
     var angle = svg.append('text')
-        .attr('dx', 240)
-        .attr('dy', 460)
+        .attr('dx', view_width / 2 - 10)
+        .attr('dy', view_height - 40)
         .text("jiaodu")
 
 
@@ -61,17 +82,17 @@
         circleLabel
             .attr('dx', x + 20)
             .attr('dy', y + 20)
-            .text(x + "," + y)
+            .text(Math.floor(x) + "," + Math.floor(y))
 
         line
             .attr('x1', x - circle_radius / 2)
             .attr('y1', y - circle_radius / 2)
-            .attr('x2', 250)
-            .attr('y2', 500)
+            .attr('x2', view_width / 2)
+            .attr('y2', view_height)
             .attr('stroke', "black")
             .attr('stroke-dasharray', "5,5")
             .attr('stroke-width', "2")
-        angle.text(Math.floor(Math.random()*50))
+        angle.text(Math.floor(Math.random() * 50))
     }
 
     moveCircle(180, 180)
