@@ -13,7 +13,6 @@ var client = new faye.Client('http://localhost:8000/');
 //     alert('Got a message: ' + message.text);
 // })
 
-
 var net = require('net')
 var path = require('path')
 
@@ -36,6 +35,25 @@ var MAGIC_HEADER = 'aa55a55a'
 
 var MagicHeader = new Buffer(MAGIC_HEADER, 'hex');
 
+function calPos(left, right) {
+    var bar_width = 182;
+    var target_x = (left * left + bar_width * bar_width - right * right) / (2 * bar_width) - bar_width / 2;
+    var target_y = Math.pow(left * left - target_x * target_x, 0.5);
+    console.log(target_y, bar_width / 2 - target_x)
+    var a = Math.atan2(
+        target_y, target_x)
+    var message = {
+        x: target_x,
+        y: target_y,
+        l: left,
+        r: right,
+        angle: 180 * a / Math.PI
+    }
+    return message
+}
+
+calPos(182, 182)
+
 var server = net.createServer(function (socket) {
     var remote_address = socket.remoteAddress
     var remote_port = socket.remotePort
@@ -45,7 +63,9 @@ var server = net.createServer(function (socket) {
     console.log('connection_socket', remote_address, remote_port)
     var result_window = []
     var last_window_at = new Date().getTime()
-
+    socket.on('end', function (data) {
+        process.stdout.write('\x07')
+    })
     socket.on('data', function (data) {
         var current_time = new Date().getTime()
         var results = []
@@ -54,9 +74,13 @@ var server = net.createServer(function (socket) {
             data: data
         }
 
-        // var current = new Date().getTime()
-        // console.log(current - last_pkg_at, data.length)
+        // var current = new Date().getTime(),
+        //     delta = current - last_pkg_at
+        // console.log(delta, data.length)
         // last_pkg_at = current
+        // if (delta > 500 || data.length > 21) {
+        //     process.stdout.write('\x07')
+        // }
 
         current_buff = (current_buff) ? Buffer.concat([current_buff, data]) : data
         try {
@@ -77,25 +101,13 @@ var server = net.createServer(function (socket) {
             while (!isEnd) {
                 result = parser.parse(current_buff)
                 results.push(result)
-
-                var bar_width = 182;
-                var left = result.left_distance;
-                var right = result.right_distance;
-                var target_x = (left * left + bar_width * bar_width - right * right) / (2 * bar_width) - bar_width / 2;
-                var target_y = Math.pow(Math.pow(left, 2) - Math.pow(target_x, 2), 0.5);
-                var message = {
-                    x: target_x,
-                    y: target_y,
-                    l: left,
-                    r: right
-                };
-                client.publish('/messages', message);
-
+                var message = calPos(result.left_distance, result.right_distance)
                 result_window.push(message)
                 var delta = current_time - last_window_at
                 if (delta > 500) {
                     if (result_window.length > 0) {
                         console.log(delta, result_window[0])
+                        client.publish('/messages', result_window[0]);
                     } else {
                         console.log(delta, "no result")
                     }
@@ -108,7 +120,6 @@ var server = net.createServer(function (socket) {
                 result.frame_len = frameLength
                 current_buff = current_buff.slice(frameLength)
                 isEnd = (current_buff.length == 0)
-                console.log(result.frame_id)
             }
 
             log.msg = 'parsed,' + results.length
